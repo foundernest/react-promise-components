@@ -1,4 +1,10 @@
-import React, { useState, useImperativeHandle, useRef, useEffect } from 'react'
+import React, {
+  useState,
+  useImperativeHandle,
+  useRef,
+  useEffect,
+  useCallback
+} from 'react'
 
 import { randHex } from './utils/randHex'
 import { updateObject, removeObjectItemByKey } from './utils/immutable'
@@ -72,8 +78,13 @@ export const PromiseComponentsFactory = React.forwardRef(
       stateRef.current = { modals }
     })
 
+    const getCurrentPromiseComponents = useCallback(
+      () => stateRef.current.modals,
+      []
+    )
+
     async function deletePromiseComponent(hash: string) {
-      const { modals: currentPromiseComponents } = stateRef.current
+      let currentPromiseComponents = getCurrentPromiseComponents()
       const { timeout } = currentPromiseComponents[hash]
       setPromiseComponents(
         updateObject(currentPromiseComponents, {
@@ -83,6 +94,7 @@ export const PromiseComponentsFactory = React.forwardRef(
         })
       )
       await delay(timeout.exit)
+      currentPromiseComponents = getCurrentPromiseComponents()
       setPromiseComponents(
         removeObjectItemByKey(currentPromiseComponents, hash)
       )
@@ -97,7 +109,7 @@ export const PromiseComponentsFactory = React.forwardRef(
     ) {
       return (props: ComponentProps) => {
         return new Promise<ReturnValue>(async promiseResolve => {
-          const { modals: currentPromiseComponents } = stateRef.current
+          let currentPromiseComponents = getCurrentPromiseComponents()
           const hash = randHex()
           const resultOptions = { ...defaultOptions, ...options }
           const handleClose = (value: ReturnValue) => {
@@ -121,6 +133,7 @@ export const PromiseComponentsFactory = React.forwardRef(
             })
           )
           await delay(resultOptions.timeout.enter)
+          currentPromiseComponents = getCurrentPromiseComponents()
           setPromiseComponents(
             updateObject(currentPromiseComponents, {
               [hash]: updateObject(newPromiseComponent, {
