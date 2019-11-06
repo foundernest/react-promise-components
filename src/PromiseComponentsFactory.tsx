@@ -108,6 +108,7 @@ export const PromiseComponentsFactory = React.forwardRef(
       options: PromiseComponentOptions<any, any> = {}
     ) {
       return (props: ComponentProps) => {
+        // eslint-disable-next-line no-async-promise-executor
         return new Promise<ReturnValue>(async promiseResolve => {
           let currentPromiseComponents = getCurrentPromiseComponents()
           const hash = randHex()

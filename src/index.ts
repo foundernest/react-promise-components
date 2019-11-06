@@ -5,10 +5,6 @@ export {
   createPromiseComponent,
   closePromiseComponent
 } from './PromiseComponents'
-import { PromiseComponentProps } from './PromiseComponentsFactory'
-
-export type PromiseComponentProps<ReturnType> = PromiseComponentProps<
-  ReturnType
->
+export { PromiseComponentProps } from './PromiseComponentsFactory'
 
 export default PromiseComponents
